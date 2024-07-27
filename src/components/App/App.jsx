@@ -3,9 +3,6 @@ import Feedback from '../Feedback/Feedback';
 import Options from '../Options/Options';
 import Description from '../Description/Description';
 import Notification from '../Notification/Notification';
-import css from "./App.module.css"
-import clsx from 'clsx';
-
 
 function App() {
   const [feedback, setFeedback] = useState(() => {
@@ -16,10 +13,6 @@ function App() {
   useEffect(() => {
     localStorage.setItem('feedback', JSON.stringify(feedback));
   }, [feedback]);
-
-useEffect(() => {
-  localStorage.setItem('feedback', JSON.stringify(feedback));
-}, [feedback]);
 
 const handleClickReset = () => {
   setFeedback({
@@ -43,24 +36,25 @@ const handleClick = key => {
 const positiveFeedback = () => {
  return  Math.round((feedback.good / totalFeedback()) * 100);
 };
-const containerButton = clsx(css.container)
   return (
-    <>
-    <Description></Description>
-    <div className={containerButton} >
-      <Options onTrack={() => handleClick("good")}>Good</Options>
-      <Options onTrack={() => handleClick("neutral")}>Neutral</Options>
-      <Options onTrack={() => handleClick("bad")}>Bad</Options>
-      {totalFeedback() >0 && <Options onTrack={handleClickReset}>Reset</Options>}
-    </div>
-    {totalFeedback() === 0 && <Notification/>}
-     {totalFeedback() >= 1 && <Feedback value={feedback.good} >Good</Feedback>}
-     {totalFeedback() >= 1 && <Feedback value={feedback.neutral}>Neutral</Feedback>}
-     {totalFeedback() >= 1 && <Feedback value={feedback.bad}>Bad</Feedback>}
-     {totalFeedback() >= 1 && <Feedback value={totalFeedback()}>Total</Feedback>}
-     {totalFeedback() >= 1 && <Feedback value={`${positiveFeedback()}%`}>Positive</Feedback>}
-    </>
+      <>
+        <Description></Description>
+        <Options 
+        onTrack={handleClick} 
+        feedback={feedback} 
+        totalFeedback={totalFeedback()} 
+        onReset={handleClickReset} 
+      />
+        {totalFeedback() === 0 ? <Notification /> : (
+        <Feedback 
+          feedback={feedback} 
+          totalFeedback={totalFeedback()} 
+          positiveFeedback={positiveFeedback()} 
+        />
+      )}
+     
+      </>
   )
 }
 
-export default App
+export default App;
